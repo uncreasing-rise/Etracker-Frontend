@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./components/Login";
+import AdminDashboard from "./components/AdminDashboard";
+import TeacherDashboard from "./components/TeacherDashboard";
+import StudentDashboard from "./components/StudentDashboard";
+import { isAuthenticated, getUserRole } from "./utils/auth";
 
-function App() {
+const App = () => {
+  const userRole = isAuthenticated() ? getUserRole() : null;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      {userRole === "admin" && (
+        <Route path="/dashboard" element={<AdminDashboard />} />
+      )}
+      {userRole === "teacher" && (
+        <Route path="/dashboard" element={<TeacherDashboard />} />
+      )}
+      {userRole === "student" && (
+        <Route path="/dashboard" element={<StudentDashboard />} />
+      )}
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
   );
-}
+};
 
 export default App;
